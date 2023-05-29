@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_CITIES 1000
+#define MAX_ROUTES 500000
+
+// Estrutura para representar uma rota
+typedef struct {
+    int cidadeA;
+    int cidadeB;
+} Rota;
+
+// Estrutura para representar uma cidade
+typedef struct {
+    int id;
+    bool visitou;
+    int distancia;
+    int partida;
+} Cidade;
+
+
+int rotasRiacho(int comeco, int destino, int estadunido, int contCidades, int contRotas, Rota rotas[]) {
+    Cidade cidades[MAX_CITIES];
+    for (int i = 0; i < contCidades; i++) {
+        cidades[i].id = i + 1;
+        cidades[i].visitou = false;
+        cidades[i].distancia = -1;
+        cidades[i].partida = -1;
+    }
+    cidades[comeco - 1].visitou = true;
+    cidades[comeco - 1].distancia = 0;
+    int fila[MAX_CITIES];
+    int frente = 0;
+    int fim = 0;
+    fila[fim++] = comeco;
+
+
+    while (frente < fim) {
+        int localAtual = fila[frente++];
+        if (localAtual == destino) {
+            return cidades[localAtual - 1].distancia;
+        }
+        for (int i = 0; i < contRotas; i++) {
+            int cidadeA = rotas[i].cidadeA;
+            int cidadeB = rotas[i].cidadeB;
+
+            if (cidadeA == localAtual || cidadeB == localAtual) {
+                int proxCidade = (cidadeA == localAtual) ? cidadeB : cidadeA;
+
+                if (proxCidade != estadunido && !cidades[proxCidade - 1].visitou) {
+
+                    cidades[proxCidade - 1].visitou = true;
+                    cidades[proxCidade - 1].distancia = cidades[localAtual - 1].distancia + 1;
+                    cidades[proxCidade - 1].partida = localAtual;
+
+                    fila[fim++] = proxCidade;
+                }
+            }
+        }
+    }
+
+
+    return -1;
+}
+
+int main() {
+    int contCidades, contRotas;
+    while (scanf("%d %d", &contCidades, &contRotas) != EOF) {
+
+        Rota rotas[MAX_ROUTES];
+        for (int i = 0; i < contRotas; i++) {
+            scanf("%d %d", &rotas[i].cidadeA, &rotas[i].cidadeB);
+        }
+
+
+        int curytyba, riacho, estadunido;
+        scanf("%d %d %d", &curytyba, &riacho, &estadunido);
+
+
+        int minHours = rotasRiacho(curytyba, riacho, estadunido, contCidades, contRotas, rotas);
+
+
+        printf("%d\n", minHours);
+    }
+
+    return 0;
+}
